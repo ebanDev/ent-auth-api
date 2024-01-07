@@ -1,3 +1,4 @@
+#!/usr/bin/env DENO_DIR=/tmp deno run
 import { toutatice } from "../src/toutatice/auth.ts";
 
 

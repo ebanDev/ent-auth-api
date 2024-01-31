@@ -52,10 +52,11 @@ export default async function toutatice(username: string, password: string, serv
     };
 
     const educonnectLoginReq = await authenticate(cookieJar, toutaticeLoginReq.url, authPayload);
+    const educonnectLoginDom = new DOMParser().parseFromString(await educonnectLoginReq.text(), "text/html")!;
 
-    const educonnectSAML = extractInputValue(educonnectLoginReq, "input[name='SAMLResponse']");
-    const educonnectRelayState = extractInputValue(educonnectLoginReq, "input[name='RelayState']");
-    const educonnectNextUrl = educonnectLoginReq.querySelector("form")?.getAttribute("action")!;
+    const educonnectSAML = extractInputValue(educonnectLoginDom, "input[name='SAMLResponse']");
+    const educonnectRelayState = extractInputValue(educonnectLoginDom, "input[name='RelayState']");
+    const educonnectNextUrl = educonnectLoginDom.querySelector("form")?.getAttribute("action")!;
 
     const SAMLPayload = { "SAMLResponse": educonnectSAML, "RelayState": educonnectRelayState };
     const educonnectAuthReq = await authenticate(cookieJar, educonnectNextUrl, SAMLPayload);
@@ -75,12 +76,27 @@ export default async function toutatice(username: string, password: string, serv
     const toutaticeAuthText = await toutaticeAuthReq.text();
     const toutaticeAuthDom = new DOMParser().parseFromString(toutaticeAuthText, "text/html")!;
 
-    if (!toutaticeAuthDom.title.includes("Mon bureau")) {
+    const finalCookiesParams = {
+        conversation: toutaticeAuthDom.querySelector("conversation")?.innerText || "None",
+        uidInSession: toutaticeAuthDom.querySelector("uidInSession")?.getAttribute("value")!,
+        sessionid: toutaticeAuthDom.querySelector("input[name='sessionid']")?.getAttribute("value")!,
+    }
+
+    const finalCookiesReq = await fetchWithCookieJar(
+        cookieJar,
+        toutaticeAuth + "?" + buildURLSearchParams(finalCookiesParams),
+        { method: "GET", redirect: "follow" }
+    );
+
+    const finalCookiesText = await finalCookiesReq.text();
+    const finalCookiesDom = new DOMParser().parseFromString(finalCookiesText, "text/html")!;
+
+    if (!finalCookiesDom.title.includes("Mon bureau")) {
         throw new Error("Invalid credentials");
     }
 
     if (service in services) {
-        await services[service](cookieJar, toutaticeAuthText);
+        await services[service](cookieJar, finalCookiesText);
     }
 
     const plainObject: { [key: string]: { [key: string]: string } } = {};

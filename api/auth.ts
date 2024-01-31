@@ -17,7 +17,7 @@ export default async (req: Request) => {
         return errorResponse("missing_ent", "You must provide an ENT.");
     }
 
-    if (!supportedEnt.includes(ent)) {
+    if (!supportedEnt[ent]) {
         return errorResponse("unsupported_ent", `The ENT ${ent} is not supported. Currently, the supported one(s) is/are: ${supportedEnt.join(", ")}`);
     }
 

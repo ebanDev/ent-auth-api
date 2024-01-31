@@ -1,5 +1,4 @@
-import { fetch, CookieJar } from "npm:node-fetch-cookies";
-import { DOMParser, Document } from "https://deno.land/x/deno_dom@v0.1.43/deno-dom-wasm.ts";
+import { fetch, CookieJar, DOMParser, Document } from "../../deps.ts";
 import { services } from "./services.ts";
 
 const fetchWithCookieJar = async (cookieJar: CookieJar, url: string, options: RequestInit = {}) => {

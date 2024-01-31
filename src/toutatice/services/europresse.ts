@@ -1,5 +1,4 @@
-import { fetch, CookieJar } from "npm:node-fetch-cookies";
-import { DOMParser } from "https://deno.land/x/deno_dom@v0.1.43/deno-dom-wasm.ts";
+import { fetch, CookieJar, DOMParser, Document } from "../../../deps.ts";
 
 export async function europresse(cookieJar: CookieJar, portalData: string) {
     const safranUrl = "https://www.toutatice.fr" + new DOMParser().parseFromString(portalData, "text/html")!.querySelector(".safran-placeholder")?.getAttribute("data-url")!;

@@ -1,4 +1,4 @@
-import { fetch, CookieJar } from "npm:node-fetch-cookies";
+import { fetch, CookieJar } from "../../../deps.ts";
 
 export async function pronote(cookieJar: CookieJar, portalData: string) {
     const etabIdRegex = /"UAI"\s*:\s*"(\d+S)"/;

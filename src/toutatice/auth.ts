@@ -1,17 +1,6 @@
 import {fetch, CookieJar} from "npm:node-fetch-cookies";
 import {DOMParser} from "https://deno.land/x/deno_dom@v0.1.43/deno-dom-wasm.ts";
 
-function replacer(key, value) {
-    if(value instanceof Map) {
-        return {
-            dataType: 'Map',
-            value: Array.from(value.entries()), // or with spread: value: [...value]
-        };
-    } else {
-        return value;
-    }
-}
-
 async function toutatice(username: string, password: string) {
 // Define constants
     const cookieJar = new CookieJar();
@@ -121,7 +110,15 @@ async function toutatice(username: string, password: string) {
         throw new Error("Invalid credentials");
     }
 
-    return JSON.stringify(cookieJar.cookies, replacer);
+    let plainObject: { [key: string]: { [key: string]: string } } = {};
+    cookieJar.cookies.forEach((value, key) => {
+        plainObject[key] = {};
+        value.forEach((nestedValue, nestedKey) => {
+            plainObject[key][nestedKey] = nestedValue;
+        });
+    });
+
+    return JSON.stringify(plainObject);
 }
 
 

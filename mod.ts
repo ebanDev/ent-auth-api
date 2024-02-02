@@ -1,4 +1,5 @@
 import {supportedEnt} from "./src/ent.ts";
+import {CookieJar} from "./deps.ts";
 
 /**
  * Get cookies for a service from an ENT.
@@ -6,8 +7,9 @@ import {supportedEnt} from "./src/ent.ts";
  * @param username - username of your ENT account.
  * @param password - password of your ENT account.
  * @param service - name of the service you want to get cookies from (pronote for example).
+ * @returns The cookieJar containing the cookies for the service.
  */
-export async function getCookies(ent: string, username: string, password: string, service: string) {
+export async function getCookies(ent: string, username: string, password: string, service: string): Promise<CookieJar> {
     if (!ent) {
         throw new Error("You must provide an ENT.");
     }

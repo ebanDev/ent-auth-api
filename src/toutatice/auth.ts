@@ -98,17 +98,7 @@ export default async function toutatice(username: string, password: string, serv
         await services[service](cookieJar, finalCookiesText);
     }
 
-    const plainObject: { [key: string]: { [key: string]: string } } = {};
-    // deno-lint-ignore no-explicit-any
-    cookieJar["cookies"].forEach((value: any, key: any) => {
-        plainObject[key] = {};
-        // deno-lint-ignore no-explicit-any
-        value.forEach((nestedValue: any, nestedKey: any) => {
-            plainObject[key][nestedKey] = nestedValue;
-        });
-    });
-
-    return JSON.stringify(plainObject);
+    return cookieJar;
 }
 
 export { toutatice };

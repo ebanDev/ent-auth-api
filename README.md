@@ -22,6 +22,6 @@ If you want to add support for another ENT, feel free to open a pull request.
 ```ts
 import { getCookie } from "https://deno.land/x/ent_cookies/mod.ts";
 
-const cookie = await getCookie("username", "password", "ent", "service");
-console.log(cookie);
+const cookieJar = await getCookie("username", "password", "ent", "service");
+console.log(cookieJar.cookies);
 ```

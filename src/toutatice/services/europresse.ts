@@ -1,4 +1,4 @@
-import { fetch, CookieJar, DOMParser, Document } from "../../../deps.ts";
+import { fetch, CookieJar, DOMParser } from "../../../deps.ts";
 
 export async function europresse(cookieJar: CookieJar, portalData: string) {
     const safranUrl = "https://www.toutatice.fr" + new DOMParser().parseFromString(portalData, "text/html")!.querySelector(".safran-placeholder")?.getAttribute("data-url")!;

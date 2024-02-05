@@ -1,12 +1,12 @@
-import { fetch, CookieJar, JSDOM } from "../../deps.ts";
+import { fetch, CookieJar, DOMParser, Document } from "../../deps.ts";
 import { services } from "./services.ts";
 
 const fetchWithCookieJar = async (cookieJar: CookieJar, url: string, options: RequestInit = {}) => {
     return await fetch(cookieJar, url, { redirect: "follow", ...options });
 };
 
-const extractInputValue = (dom: JSDOM, selector: string) => {
-    const input = dom.window.document.querySelector(selector);
+const extractInputValue = (dom: Document, selector: string) => {
+    const input = dom.querySelector(selector);
     return input?.getAttribute("value") || "";
 };
 
@@ -31,7 +31,7 @@ export default async function toutatice(username: string, password: string, serv
     const fetchAndParse = async (url: string) => {
         const response = await fetchWithCookieJar(cookieJar, url);
         const text = await response.text();
-        return new JSDOM(text);
+        return new DOMParser().parseFromString(text, "text/html")!;
     };
 
     const toutaticeEntrypointDom = await fetchAndParse(toutaticeEntrypoint);
@@ -51,11 +51,11 @@ export default async function toutatice(username: string, password: string, serv
     };
 
     const educonnectLoginReq = await authenticate(cookieJar, toutaticeLoginReq.url, authPayload);
-    const educonnectLoginDom = new JSDOM(await educonnectLoginReq.text());
+    const educonnectLoginDom = new DOMParser().parseFromString(await educonnectLoginReq.text(), "text/html")!;
 
     const educonnectSAML = extractInputValue(educonnectLoginDom, "input[name='SAMLResponse']");
     const educonnectRelayState = extractInputValue(educonnectLoginDom, "input[name='RelayState']");
-    const educonnectNextUrl = educonnectLoginDom.window.document.querySelector("form")?.getAttribute("action")!;
+    const educonnectNextUrl = educonnectLoginDom.querySelector("form")?.getAttribute("action")!;
 
     const SAMLPayload = { "SAMLResponse": educonnectSAML, "RelayState": educonnectRelayState };
     const educonnectAuthReq = await authenticate(cookieJar, educonnectNextUrl, SAMLPayload);
@@ -73,12 +73,12 @@ export default async function toutatice(username: string, password: string, serv
     );
 
     const toutaticeAuthText = await toutaticeAuthReq.text();
-    const toutaticeAuthDom = new JSDOM(toutaticeAuthText);
+    const toutaticeAuthDom = new DOMParser().parseFromString(toutaticeAuthText, "text/html")!;
 
     const finalCookiesParams = {
-        conversation: toutaticeAuthDom.window.document.querySelector("conversation")?.textContent || "None",
-        uidInSession: toutaticeAuthDom.window.document.querySelector("uidInSession")?.getAttribute("value")!,
-        sessionid: toutaticeAuthDom.window.document.querySelector("input[name='sessionid']")?.getAttribute("value")!,
+        conversation: toutaticeAuthDom.querySelector("conversation")?.innerText || "None",
+        uidInSession: toutaticeAuthDom.querySelector("uidInSession")?.getAttribute("value")!,
+        sessionid: toutaticeAuthDom.querySelector("input[name='sessionid']")?.getAttribute("value")!,
     }
 
     const finalCookiesReq = await fetchWithCookieJar(
@@ -88,9 +88,9 @@ export default async function toutatice(username: string, password: string, serv
     );
 
     const finalCookiesText = await finalCookiesReq.text();
-    const finalCookiesDom = new JSDOM(finalCookiesText);
+    const finalCookiesDom = new DOMParser().parseFromString(finalCookiesText, "text/html")!;
 
-    if (!finalCookiesDom.window.document.title.includes("Mon bureau")) {
+    if (!finalCookiesDom.title.includes("Mon bureau")) {
         throw new Error("Invalid credentials");
     }
 

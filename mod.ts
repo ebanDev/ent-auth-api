@@ -7,7 +7,7 @@ import {CookieJar} from "./deps.ts";
  * @param username - username of your ENT account.
  * @param password - password of your ENT account.
  * @param service - name of the service you want to get cookies from (pronote for example).
- * @returns The cookieJar containing the cookies for the service.
+ * @returns A dict with the cookieJar containing the cookies for the service and the domain name of the service.
  */
 export async function getCookies(ent: string, username: string, password: string, service: string): Promise<CookieJar> {
     if (!ent) {

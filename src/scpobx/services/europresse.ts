@@ -4,5 +4,10 @@ export async function europresse(cookieJar: CookieJar) {
     const proxyUrl = "http://proxy.sciencespobordeaux.fr/login?url=https://nouveau.europresse.com/access/ip/default.aspx?un=SCIENCESPOT_1"
     const proxyData = await fetch(cookieJar, proxyUrl, { redirect: "follow" });
 
-    return cookieJar;
+    const europressProxyDomain = proxyData.url.split("/")[2];
+
+    return { 
+        cookieJar: cookieJar,
+        domain: europressProxyDomain
+     };
 };

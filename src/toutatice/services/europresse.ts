@@ -21,12 +21,17 @@ import { fetch, CookieJar, DOMParser } from "../../../deps.ts";
 
     const SAMLPayload = { "SAMLResponse": europresseSAML, "RelayState": europresseRelayState };
 
-    await fetch(cookieJar, europresseNextUrl, {
+    const europresseLastFetch = await fetch(cookieJar, europresseNextUrl, {
         method: "POST",
         redirect: "follow",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams(SAMLPayload)
     });
 
-    return cookieJar;
+    const europresseDomain = europresseLastFetch.url.split("/")[2];
+
+    return {
+        cookieJar: cookieJar,
+        domain: europresseDomain
+    }
 }

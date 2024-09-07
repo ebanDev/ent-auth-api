@@ -54,6 +54,13 @@ export default async function scpobx(username: string, password: string, service
     };
 
     if (service in services) {
-        await services[service](cookieJar);
+        return await services[service](cookieJar);
+    }
+
+    return {
+        cookieJar: cookieJar,
+        domain: "ent.sciencespobordeaux.fr"
     }
 };
+
+export { scpobx };

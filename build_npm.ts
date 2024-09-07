@@ -12,7 +12,7 @@ await build({
     },
     package: {
         name: "ent-cookies",
-        version: "1.0.3",
+        version: "1.1.0",
         description:
             "Get your ENT cookies from your username and password for any service!",
         license: "MIT",

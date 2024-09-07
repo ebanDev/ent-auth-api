@@ -1,6 +1,6 @@
 import { fetch, CookieJar, DOMParser } from "../../../deps.ts";
 
-export async function europresse(cookieJar: CookieJar, portalData: string) {
+    export async function europresse(cookieJar: CookieJar, portalData: string) {
     const safranUrl = "https://www.toutatice.fr" + new DOMParser().parseFromString(portalData, "text/html")!.querySelector(".safran-placeholder")?.getAttribute("data-url")!;
     const safranData = await fetch(cookieJar, safranUrl, { redirect: "follow" });
     const safranText = await safranData.text();
